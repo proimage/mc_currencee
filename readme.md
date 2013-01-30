@@ -13,7 +13,7 @@ Changelog
 	- Added "markup" and "separator" parameters to single-tag mode
 	- Added {total_results}, {count}, and {code} variables to tag pair
 	- Added "backspace" parameter to tag pair
-- 1.0.0 (Not released publicly; EE1-only)
+- 1.0.0 (EE1-only)
 	- Single currency selection
 	- Matrix celltype support
 
