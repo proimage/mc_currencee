@@ -8,6 +8,7 @@ Changelog
 =========
 - 2.1.0 (2013-04-29):
 	- Switched to using Chosen jQuery plugin instead of EE/CI tables for selection of multiple currencies. Chosen also enhances single-currency selection and adds a search-as-you-type feature to the currency fields.
+	- Add-on is now for sale at devot-ee.com. GitHub repo remains available for free trials.
 - 2.0.0 (2013-01-30):
 	- Now EE2 compatible. All new features listed for this version and onwards are EE2-only. EE1 development has ended.
 	- Added global and field settings for single/multiple currency selection and displaying common/all currencies
