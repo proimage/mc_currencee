@@ -9,7 +9,6 @@
 
 /**
  * Left Off:
- * Multi-select table is sortable but "Select All" checkbox header is as well despite being told not to be.
  *
  */
 
@@ -18,7 +17,7 @@ class Mc_currencee_ft extends EE_Fieldtype {
 	var $info = array(
 			'name'             => 'MC CurrencEE',
 			'version'          => '2.0.0',
-			'desc'			=> 'Select currencies from the 176 active codes of the official ISO 4217 3 digit currency codes and names. Configurable to display either all or just common currencies.',
+			'desc'			=> 'Select from a list of currencies. Configurable to display either all or just common currencies.',
 			// 'docs_url'		=> 'http://www.pro-image.co.il/labs/mc_currencee'
 			);
 
@@ -40,13 +39,13 @@ class Mc_currencee_ft extends EE_Fieldtype {
 
 
 		$this->modes = array(
-				'single'	=> lang('single_currency'),
-				'multiple'	=> lang('multiple_currencies')
+				'single'	=> $this->EE->lang->line('single_currency'),
+				'multiple'	=> $this->EE->lang->line('multiple_currencies')
 			);
 
 		$this->shown_currencies = array(
-				'common'	=> lang('common_currencies'),
-				'all'		=> lang('all_currencies')
+				'common'	=> $this->EE->lang->line('common_currencies'),
+				'all'		=> $this->EE->lang->line('all_currencies')
 			);
 	}
 
@@ -94,15 +93,15 @@ class Mc_currencee_ft extends EE_Fieldtype {
 		$settings = array_merge($this->settings, $_POST);
 
 		// Prepare settings table column headers
-		$this->EE->table->set_heading(lang('option'), lang('value'));
+		$this->EE->table->set_heading($this->EE->lang->line('option'), $this->EE->lang->line('value'));
 
 		// Add settings rows
 		$this->EE->table->add_row(
-			form_label(lang('default_selection_mode'), 'mc_currencee_mode'),
+			form_label($this->EE->lang->line('default_selection_mode'), 'mc_currencee_mode'),
 			form_dropdown('mc_currencee_mode', $this->modes, $settings['mc_currencee_mode'])
 		);
 		$this->EE->table->add_row(
-			form_label(lang('default_currencies_shown'), 'mc_currencee_shown_currencies'),
+			form_label($this->EE->lang->line('default_currencies_shown'), 'mc_currencee_shown_currencies'),
 			form_dropdown('mc_currencee_shown_currencies', $this->shown_currencies, $settings['mc_currencee_shown_currencies'])
 		);
 
@@ -129,22 +128,6 @@ class Mc_currencee_ft extends EE_Fieldtype {
 	 */
 	function display_settings($field_settings)
 	{
-/*		// Load "Table" library
-		$this->EE->load->library('table');
-
-		// If individual settings don't exist, get global defaults
-		$mode = (isset($field_settings['mode'])) ? $field_settings['mode'] : $this->settings['mode'];
-		$shown_currencies = (isset($field_settings['shown_currencies'])) ? $field_settings['shown_currencies'] : $this->settings['shown_currencies'];
-
-		// Add settings rows
-		$this->EE->table->add_row(
-			form_label(lang('selection_mode'), 'mode'),
-			form_dropdown('mode', $this->modes, $mode)
-		);
-		$this->EE->table->add_row(
-			form_label(lang('currencies_shown'), 'shown_currencies'),
-			form_dropdown('shown_currencies', $this->shown_currencies, $shown_currencies)
-		);*/
 		$interface = $this->_display_settings($field_settings);
 
 		$this->EE->table->add_row(
@@ -190,11 +173,11 @@ class Mc_currencee_ft extends EE_Fieldtype {
 		// Add settings rows
 		$settings_rows = array();
 		$settings_rows[] = array(
-			form_label(lang('selection_mode'), 'mc_currencee_mode'),
+			form_label($this->EE->lang->line('selection_mode'), 'mc_currencee_mode'),
 			form_dropdown('mc_currencee_mode', $this->modes, $mode)
 		);
 		$settings_rows[] = array(
-			form_label(lang('currencies_shown'), 'mc_currencee_shown_currencies'),
+			form_label($this->EE->lang->line('currencies_shown'), 'mc_currencee_shown_currencies'),
 			form_dropdown('mc_currencee_shown_currencies', $this->shown_currencies, $shown_currencies)
 		);
 		return $settings_rows;
@@ -230,7 +213,7 @@ class Mc_currencee_ft extends EE_Fieldtype {
 	 */
 	function display_field($data)
 	{
-		return $this->_display_field($this->field_name, $data, $this->settings);
+		return $this->_display_field($this->field_name, $data, $this->settings, 'field');
 	}
 
 	/**
@@ -241,12 +224,42 @@ class Mc_currencee_ft extends EE_Fieldtype {
 	 */
 	function display_cell($data)
 	{
-		return $this->_display_field($this->cell_name, $data, $this->settings);
-		// return "hello world $data";
+		return $this->_display_field($this->cell_name, $data, $this->settings, 'cell');
 	}
 
-	function _display_field($field_name, $data, $field_settings)
+	function _display_field($field_name, $data, $field_settings, $context)
 	{
+		$this->EE->cp->add_to_head('<link rel="stylesheet" type="text/css" href="'.URL_THIRD_THEMES.'mc_shared/lib/chosen/chosen/chosen.css" />');
+		$this->EE->cp->add_to_head('<style type="text/css">
+				.chzn-container *,
+				.chzn-container textarea,
+				.chzn-container input[type="text"],
+				.chzn-container input[type="email"],
+				.chzn-container input[type="url"],
+				.chzn-container input[type="number"],
+				.chzn-container input[type="password"] { -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; }
+				.chzn-container { width: auto !important; min-width: 175px; }
+				.chzn-container a.chzn-single { text-decoration: none; }
+			</style>');
+		$this->EE->cp->add_to_foot('<script type="text/javascript" src="'.URL_THIRD_THEMES.'mc_shared/lib/chosen/chosen/chosen.jquery.min.js"></script>');
+		$this->EE->javascript->output('
+			$(document).ready(function()
+			{
+				$(".chzn-select").chosen({ allow_single_deselect: true, no_results_text: "'.$this->EE->lang->line('no_matching_currency').'" });
+			});
+		');
+
+		if($context == 'cell')
+		{
+			$this->EE->javascript->output('
+				Matrix.bind("mc_template_selector", "display", function(cell)
+				{
+					$(".chzn-select").chosen({ allow_single_deselect: true, no_results_text: "'.$this->EE->lang->line('no_matching_currency').'" });
+				});
+			');
+		}
+
+
 		// Unserialize the field data
 		$data = unserialize(htmlspecialchars_decode($data));
 
@@ -263,131 +276,51 @@ class Mc_currencee_ft extends EE_Fieldtype {
 			// Multiple options
 			case 'multiple':
 
-				$this->EE->load->library('table');
-				$this->EE->table->clear();
-
-				// Prepare column headers for currencies
-				$this->EE->table->set_columns(array(
-					'code'		=> array('header' => lang('currency_code')),
-					'name'		=> array('header' => lang('currency_name')),
-					'_check'	=> array(
-						//'header' => form_checkbox(array('value' => 'true', 'name' => 'select_all', 'class' => 'toggle_all')),
-						'header' => form_checkbox('select_all', 'true', FALSE, 'class="toggle_all"'),
-						'sort' => FALSE
-					)
-				));
-
 				// Are we showing all currencies or just the common ones?
 				switch ($field_settings['mc_currencee_shown_currencies'])
 				{
 
 					// Show all currencies
 					case 'all':
-
-						// Init vars
-						$table_data = array();
-
-						// Iterate over the complete list of currencies to build each table row
-						foreach ($this->currencies as $code => $label)
-						{
-							// // Is $code found in the $data array?
-							// $checked = ($this->in_array_recursive($code, $data)) ? TRUE : FALSE;
-
-							// Is $code found in the $data array?
-							$checked = (in_array($code, $data)) ? TRUE : FALSE;
-
-							// Prepare checkbox parameters
-							$params = array(
-								'name'		=> $field_name.'[]',
-								'id'		=> $code,
-								'value'		=> $code,
-								'checked'	=> $checked,
-								'class'		=> 'toggle'
-							);
-							// Add row as array to table array
-							$table_data[] = array(
-								'code'		=> form_label($code,$code),
-								'name'		=> form_label($label,$code),
-								'_check'	=> form_checkbox($params)
-							);
-						} // End table rows loop
-
-						// With all rows prepared, buid complete table
-						$this->EE->table->set_data($table_data);
-						return $this->EE->table->generate();
+						return form_multiselect(
+							$field_name.'[]',
+							$this->currencies,
+							$data,
+							'class="chzn-select" data-placeholder="'.$this->EE->lang->line('select_currencies').'"'
+						);
 						break;
 
 					default:
 
 					// Show common currencies (same as "all" option above, just with different dataset)
 					case 'common':
-						$table_data = array();
-						foreach ($this->common_currencies as $code => $label)
-						{
-							// Is $code found in the $data array?
-							$checked = (in_array($code, $data)) ? TRUE : FALSE;
-
-							$params = array(
-								'name'		=> $field_name.'[]',
-								'id'		=> $code,
-								'value'		=> $code,
-								'checked'	=> $checked,
-								'class'		=> 'toggle'
-							);
-							$table_data[] = array(
-								'code'		=> form_label($code,$code),
-								'name'		=> form_label($label,$code),
-								'_check'	=> form_checkbox($params)
-							);
-						}
-
-						$this->EE->table->set_data($table_data);
-						$currencies_table = $this->EE->table->generate($table_data);
+						$currencies_multiselect = form_multiselect(
+							$field_name.'[]',
+							$this->common_currencies,
+							$data,
+							'class="chzn-select" data-placeholder="'.$this->EE->lang->line('select_currencies').'"'
+						);
 
 						// Output warning if existing stored values are not in limited set of common currencies
 						$uncommon_currencies = array_diff($this->currencies, $this->common_currencies);
 						$data_r = array_flip($data); // swaps keys <-> values
 						$extra_currencies = array_intersect_key($data_r, $uncommon_currencies);
 						$warning = '';
-						$extra_currencies_table = '';
+						$extra_currencies_multiselect = '';
 
 						if (count($extra_currencies) > 0)
 						{
-							$warning = '<div class="notice">'.lang('extra_currencies_selected_warning').'</div>';
+							$warning = '<div class="notice">'.$this->EE->lang->line('extra_currencies_selected_warning').'</div>';
 
-							$this->EE->table->clear();
-							// Prepare column headers for currencies
-							$this->EE->table->set_columns(array(
-								'code'		=> array('header' => lang('currency_code')),
-								'name'		=> array('header' => lang('currency_name')),
-								'_check'	=> array(
-									//'header' => form_checkbox(array('value' => 'true', 'name' => 'select_all', 'class' => 'toggle_all')),
-									'header' => form_checkbox('select_all', 'true', FALSE, 'class="toggle_all"'),
-									'sort' => FALSE)
-							));
-
-							$extra_table_data = array();
-							foreach ($extra_currencies as $code => $index)
-							{
-								$params = array(
-									'name'		=> $field_name.'[]',
-									'id'		=> $code,
-									'value'		=> $code,
-									'checked'	=> TRUE,
-									'class'		=> 'toggle'
-								);
-								$extra_table_data[] = array(
-									'code'		=> form_label($code,$code),
-									'name'		=> form_label($uncommon_currencies[$code],$code),
-									'_check'	=> form_checkbox($params)
-								);
-							}
-							$this->EE->table->set_data($extra_table_data);
-
-							$extra_currencies_table = $this->EE->table->generate($extra_table_data);
+							$extra_currencies_multiselect = form_multiselect(
+								$field_name.'[]',
+								$extra_currencies,
+								$data,
+								'class="chzn-select" data-placeholder="'.$this->EE->lang->line('select_currencies').'"'
+							);
 						}
 
-						return $currencies_table.$warning.$extra_currencies_table;
+						return $currencies_multiselect.$warning.$extra_currencies_multiselect;
 						break;
 
 				} // END shown_currencies switch
@@ -398,39 +331,24 @@ class Mc_currencee_ft extends EE_Fieldtype {
 			default:
 			case 'single':
 
-				// Init vars
-				$combined_all = array();
-				$combined_common = array();
-
 				// Are we showing all or just the common currencies?
 				switch ($field_settings['mc_currencee_shown_currencies']) {
 
 					// All currencies
 					case 'all':
 
-						// Build 'all' and 'common' arrays for <select> lists according to pattern:
-						//
-						//		array('USD' => 'USD - United States Dollars')
-						//
-						foreach ($this->currencies as $key => $value)
-						{
-							$combined_all[$key] = $key . ' - ' . $value;
-						}
-						foreach ($this->common_currencies as $key => $value)
-						{
-							$combined_common[$key] = $key . ' - ' . $value;
-						}
 						// Prepare output
 						$output = form_dropdown(
 							$field_name.'[]',
 							array(
-								'' => '--',
+								'',
 								 // Common currencies
-								lang('common_currencies') => $combined_common,
+								$this->EE->lang->line('common_currencies') => $this->common_currencies,
 								 // Everything minus what's in the common array
-								lang('other_currencies') => array_diff_key($combined_all, $combined_common)
+								$this->EE->lang->line('other_currencies') => array_diff_key($this->currencies, $this->common_currencies)
 							),
-							$data
+							$data,
+							'class="chzn-select" data-placeholder="'.$this->EE->lang->line('select_currencies').'"'
 						);
 						break;
 
@@ -441,14 +359,9 @@ class Mc_currencee_ft extends EE_Fieldtype {
 
 						$output = '';
 
-						foreach ($this->common_currencies as $key => $value)
-						{
-							$combined_common[$key] = $key . ' - ' . $value;
-						}
-
 						$dropdown = array(
 								'' => '--',
-								lang('common_currencies') => $combined_common
+								$this->EE->lang->line('common_currencies') => $this->common_currencies
 						);
 
 						// Output warning if existing stored values are not in limited set of common currencies
@@ -459,19 +372,20 @@ class Mc_currencee_ft extends EE_Fieldtype {
 
 						if (count($extra_currencies) > 0)
 						{
-							$warning = '<div class="notice">'.lang('extra_currency_selected_warning').'</div>';
-							foreach ($extra_currencies as $code => $index)
-							{
-								$combined_extra[$code] = $code . ' - ' . $this->currencies[$code];
-							}
-							$dropdown[lang('preexisting_currencies')] = $combined_extra;
+							$warning = '<div class="notice">'.$this->EE->lang->line('extra_currency_selected_warning').'</div>';
+							// foreach ($extra_currencies as $code => $index)
+							// {
+							// 	$combined_extra[$code] = $code . ' - ' . $this->currencies[$code];
+							// }
+							$dropdown[$this->EE->lang->line('preexisting_currencies')] = $extra_currencies;
 						}
 
 
 						$output .= form_dropdown(
 							$field_name.'[]',
 							$dropdown,
-							$data
+							$data,
+							'class="chzn-select" data-placeholder="'.$this->EE->lang->line('select_currencies').'"'
 						) . $warning;
 						break;
 				} // END shown_currencies switch
@@ -479,7 +393,7 @@ class Mc_currencee_ft extends EE_Fieldtype {
 				// If multiple array elements
 				if (count($data) > 1)
 				{
-					$output .= BR.'<div class="notice">'.lang('single_mode_multiple_currencies_selected_warning').'</div>';
+					$output .= BR.'<div class="notice">'.$this->EE->lang->line('single_mode_multiple_currencies_selected_warning').'</div>';
 				}
 				return $output;
 				break;
@@ -502,7 +416,7 @@ class Mc_currencee_ft extends EE_Fieldtype {
 			{
 				if ( ! array_key_exists($value, $this->currencies))
 				{
-					return lang('invalid_currency_specified') . '"' . $value . '"';
+					return $this->EE->lang->line('invalid_currency_specified') . '"' . $value . '"';
 				}
 			}
 			return TRUE;

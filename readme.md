@@ -27,9 +27,9 @@ Assume:
 - Selected single currency:
 	- US Dollars
 - Selected multiple currencies:
-	- US dollar
-	- Euro
-	- Pound sterling
+	- US Dollars
+	- Euros
+	- Pounds Sterling
 
 Single Tag
 ----------
@@ -39,9 +39,9 @@ Single Tag
 Code:
 
 	{my_currency}
-	
+
 Output:
-	
+
 	USD
 
 
@@ -97,9 +97,9 @@ Code:
 		Selected Currency:
 		{count}. {code}
 	{/my_currency}
-	
+
 Output:
-	
+
 	Selected Currency:
 	1. USD
 
