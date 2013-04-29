@@ -9,7 +9,7 @@ Changelog
 - 2.1.0 (2013-04-29):
 	- Switched to using Chosen jQuery plugin instead of EE/CI tables for selection of multiple currencies. Chosen also enhances single-currency selection and adds a search-as-you-type feature to the currency fields.
 - 2.0.0 (2013-01-30):
-	- Now EE2 compatible. All new features listed below are EE2-only.
+	- Now EE2 compatible. All new features listed for this version and onwards are EE2-only. EE1 development has ended.
 	- Added global and field settings for single/multiple currency selection and displaying common/all currencies
 	- Added tag pair support
 	- Added "markup" and "separator" parameters to single-tag mode
