@@ -49,6 +49,15 @@ $lang = array(
 'currency_name' =>
 'Currency Name',
 
+'select_a_currency' =>
+'Select a Currency&hellip;',
+
+'select_currencies' =>
+'Select Currencies&hellip;',
+
+'no_matching_currency' =>
+'No matching currency',
+
 'extra_currencies_selected_warning' =>
 'WARNING: This entry is set to only show common currencies. However, it was already saved with currencies specified that are not included in the list of common currencies above. To avoid data loss, the pre-existing currencies are temporarily listed below.',
 
