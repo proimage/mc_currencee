@@ -16,7 +16,7 @@ class Mc_currencee_ft extends EE_Fieldtype {
 
 	var $info = array(
 			'name'             => 'MC CurrencEE',
-			'version'          => '2.1.0',
+			'version'          => '2.1.1',
 			'desc'			=> 'Select from a list of currencies. Configurable to display either all or just common currencies.',
 			// 'docs_url'		=> 'http://www.pro-image.co.il/labs/mc_currencee'
 			);

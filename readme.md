@@ -6,6 +6,8 @@ Select currencies from the 176 active codes of the official ISO 4217 3 digit cur
 
 Changelog
 =========
+- 2.1.1 (2013-06-17):
+	- Added check for dealing with old format (not serialized) data.
 - 2.1.0 (2013-04-29):
 	- Switched to using Chosen jQuery plugin instead of EE/CI tables for selection of multiple currencies. Chosen also enhances single-currency selection and adds a search-as-you-type feature to the currency fields.
 	- Add-on is now for sale at devot-ee.com. GitHub repo remains available for free trials.
