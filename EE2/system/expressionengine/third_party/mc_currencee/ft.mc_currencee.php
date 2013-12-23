@@ -30,7 +30,7 @@ class Mc_currencee_ft extends EE_Fieldtype {
 
 	function __construct()
 	{
-		parent::EE_Fieldtype();
+		EE_Fieldtype::__construct();
 
 		// Get lists of common and all currencies
 		require(PATH_THIRD.'mc_currencee/currencies.php');
@@ -116,56 +116,60 @@ class Mc_currencee_ft extends EE_Fieldtype {
 		$length	= strlen($value);
 		$end	= '';
 
-		switch ($value[0])
+		if ($length > 0)
 		{
-			case 's':
-				if ($value[$length - 2] !== '"')
-				{
-					return false;
-				}
-			case 'b':
-			case 'i':
-			case 'd':
-				// This looks odd but it is quicker than isset()ing
-				$end .= ';';
-			case 'a':
-			case 'O':
-				$end .= '}';
-
-				if ($value[1] !== ':')
-				{
-					return false;
-				}
-
-				switch ($value[2])
-				{
-					case 0:
-					case 1:
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-					case 6:
-					case 7:
-					case 8:
-					case 9:
-					break;
-
-					default:
+			switch ($value[0])
+			{
+				case 's':
+					if ($value[$length - 2] !== '"')
+					{
 						return false;
-				}
-			case 'N':
-				$end .= ';';
+					}
+				case 'b':
+				case 'i':
+				case 'd':
+					// This looks odd but it is quicker than isset()ing
+					$end .= ';';
+				case 'a':
+				case 'O':
+					$end .= '}';
 
-				if ($value[$length - 1] !== $end[0])
-				{
+					if ($value[1] !== ':')
+					{
+						return false;
+					}
+
+					switch ($value[2])
+					{
+						case 0:
+						case 1:
+						case 2:
+						case 3:
+						case 4:
+						case 5:
+						case 6:
+						case 7:
+						case 8:
+						case 9:
+						break;
+
+						default:
+							return false;
+					}
+				case 'N':
+					$end .= ';';
+
+					if ($value[$length - 1] !== $end[0])
+					{
+						return false;
+					}
+				break;
+
+				default:
 					return false;
-				}
-			break;
-
-			default:
-				return false;
+			}
 		}
+
 
 		if (($result = @unserialize($value)) === false)
 		{
@@ -368,7 +372,6 @@ class Mc_currencee_ft extends EE_Fieldtype {
 				});
 			');
 		}
-
 
 		// Unserialize the field data
 		if ($this->is_serialized(htmlspecialchars_decode($data)))
